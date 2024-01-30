@@ -38,10 +38,6 @@ func (x *PID) Reset() {
 	}
 }
 
-func (x *PID) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
 func (*PID) ProtoMessage() {}
 
 func (x *PID) ProtoReflect() protoreflect.Message {
