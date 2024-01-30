@@ -1,0 +1,48 @@
+module github.com/sllt/magpie
+
+go 1.21
+
+require (
+	github.com/DataDog/gostackparse v0.7.0
+	github.com/grandcat/zeroconf v1.0.0
+	github.com/planetscale/vtprotobuf v0.6.0
+	github.com/sllt/af v0.1.3
+	github.com/sllt/log v0.0.1
+	github.com/stretchr/testify v1.8.4
+	google.golang.org/grpc v1.60.1
+	google.golang.org/protobuf v1.32.0
+	storj.io/drpc v0.0.33
+)
+
+require (
+	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
+	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
+	github.com/charmbracelet/lipgloss v0.9.1 // indirect
+	github.com/go-logfmt/logfmt v0.6.0 // indirect
+	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+	github.com/mattn/go-isatty v0.0.18 // indirect
+	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/miekg/dns v1.1.27 // indirect
+	github.com/muesli/reflow v0.3.0 // indirect
+	github.com/muesli/termenv v0.15.2 // indirect
+	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rogpeppe/go-internal v1.10.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231002182017-d307bd883b97 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/zeebo/errs v1.2.2 // indirect
+	github.com/zeebo/xxh3 v1.0.2
+	golang.org/x/exp v0.0.0-20231226003508-02704c960a9b
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
