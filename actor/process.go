@@ -45,7 +45,6 @@ func newProcess(e *Engine, opts Opts) *process {
 		context: ctx,
 		mbuffer: nil,
 	}
-	p.inbox.Start(p)
 	return p
 }
 
@@ -138,6 +137,8 @@ func (p *process) Start() {
 		p.Invoke(p.mbuffer)
 		p.mbuffer = nil
 	}
+
+	p.inbox.Start(p)
 }
 
 func (p *process) tryRestart(v any) {
@@ -179,7 +180,7 @@ func (p *process) tryRestart(v any) {
 
 func (p *process) cleanup(wg *sync.WaitGroup) {
 	if p.context.parentCtx != nil {
-		p.context.parentCtx.children.Delete(p.Kind)
+		p.context.parentCtx.children.Delete(p.pid.ID)
 	}
 
 	if p.context.children.Len() > 0 {

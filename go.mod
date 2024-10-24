@@ -6,11 +6,10 @@ require (
 	github.com/DataDog/gostackparse v0.7.0
 	github.com/grandcat/zeroconf v1.0.0
 	github.com/planetscale/vtprotobuf v0.6.0
-	github.com/sllt/af v0.1.3
 	github.com/sllt/log v0.0.1
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/grpc v1.60.1
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 	storj.io/drpc v0.0.33
 )
 

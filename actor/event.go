@@ -18,7 +18,7 @@ type EventLogger interface {
 	Log() (slog.Level, string, []any)
 }
 
-// ActorStartedEvent is broadcasted over the eventStream each time
+// ActorStartedEvent is broadcast over the eventStream each time
 // a Receiver (Actor) is spawned and activated. This means, that at
 // the point of receiving this event the Receiver (Actor) is ready
 // to process messages.

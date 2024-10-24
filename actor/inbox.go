@@ -1,9 +1,10 @@
 package actor
 
 import (
-	"github.com/sllt/af/algorithm"
 	"runtime"
 	"sync/atomic"
+
+	"github.com/sllt/magpie/internal/pkg/ringbuffer"
 )
 
 const (
@@ -12,9 +13,10 @@ const (
 )
 
 const (
-	idle int32 = iota
+	stopped int32 = iota
+	starting
+	idle
 	running
-	stopped
 )
 
 type Scheduler interface {
@@ -43,7 +45,7 @@ type Inboxer interface {
 }
 
 type Inbox struct {
-	rb         *algorithm.RingBuffer[Envelope]
+	rb         *ringbuffer.RingBuffer[Envelope]
 	proc       Processer
 	scheduler  Scheduler
 	procStatus int32
@@ -51,8 +53,9 @@ type Inbox struct {
 
 func NewInbox(size int) *Inbox {
 	return &Inbox{
-		rb:        algorithm.NewRingBuffer[Envelope](int64(size)),
-		scheduler: NewScheduler(defaultThroughput),
+		rb:         ringbuffer.New[Envelope](int64(size)),
+		scheduler:  NewScheduler(defaultThroughput),
+		procStatus: stopped,
 	}
 }
 
@@ -90,7 +93,12 @@ func (in *Inbox) run() {
 }
 
 func (in *Inbox) Start(proc Processer) {
-	in.proc = proc
+	// transition to "starting" and then "idle" to ensure no race condition on in.proc
+	if atomic.CompareAndSwapInt32(&in.procStatus, stopped, starting) {
+		in.proc = proc
+		atomic.SwapInt32(&in.procStatus, idle)
+		in.schedule()
+	}
 }
 
 func (in *Inbox) Stop() error {

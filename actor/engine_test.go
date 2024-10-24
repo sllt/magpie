@@ -223,7 +223,7 @@ func TestSpawn(t *testing.T) {
 	wg.Wait()
 }
 
-func TestSpawnDuplicateId(t *testing.T) {
+func TestSpawnDuplicateKind(t *testing.T) {
 	e, err := NewEngine(NewEngineConfig())
 	require.NoError(t, err)
 	wg := sync.WaitGroup{}
@@ -232,6 +232,21 @@ func TestSpawnDuplicateId(t *testing.T) {
 	pid2 := e.Spawn(NewTestProducer(t, func(t *testing.T, ctx *Context) {}), "dummy")
 	e.Send(pid2, 2)
 	wg.Wait()
+}
+
+func TestSpawnDuplicateId(t *testing.T) {
+	e, err := NewEngine(NewEngineConfig())
+	require.NoError(t, err)
+	var startsCount int32 = 0
+	receiveFunc := func(t *testing.T, ctx *Context) {
+		switch ctx.Message().(type) {
+		case Initialized:
+			atomic.AddInt32(&startsCount, 1)
+		}
+	}
+	e.Spawn(NewTestProducer(t, receiveFunc), "dummy", WithID("1"))
+	e.Spawn(NewTestProducer(t, receiveFunc), "dummy", WithID("1"))
+	assert.Equal(t, int32(1), startsCount) // should only spawn one actor
 }
 
 func TestStopWaitGroup(t *testing.T) {
@@ -284,7 +299,7 @@ func TestStop(t *testing.T) {
 
 func TestPoisonWaitGroup(t *testing.T) {
 	var (
-		wg = sync.WaitGroup{}
+		wg = &sync.WaitGroup{}
 		x  = int32(0)
 	)
 	e, err := NewEngine(NewEngineConfig())
@@ -303,6 +318,21 @@ func TestPoisonWaitGroup(t *testing.T) {
 
 	e.Poison(pid).Wait()
 	assert.Equal(t, int32(1), atomic.LoadInt32(&x))
+
+	// validate poisoning non exiting pid does not deadlock
+	wg = e.Poison(NewPID(LocalLookupAddr, "non-existing"))
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		wg.Wait()
+	}()
+	select {
+	case <-done:
+	case <-time.After(20 * time.Millisecond):
+		t.Error("poison waitGroup deadlocked")
+	}
+	// ... or panic
+	e.Poison(nil).Wait()
 }
 
 func TestPoison(t *testing.T) {
@@ -327,7 +357,6 @@ func TestPoison(t *testing.T) {
 		// When a process is poisoned it should be removed from the registry.
 		// Hence, we should get NIL when we try to get it.
 		assert.Nil(t, e.Registry.get(pid))
-
 	}
 }
 

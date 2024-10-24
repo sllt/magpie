@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/sllt/af/algorithm"
+	"github.com/sllt/magpie/internal/pkg/safemap"
 )
 
 type Context struct {
@@ -21,7 +21,7 @@ type Context struct {
 	// we need this parentCtx, so we can remove the child from the parent Context
 	// when the child dies.
 	parentCtx *Context
-	children  *algorithm.SafeMap[string, *PID]
+	children  *safemap.SafeMap[string, *PID]
 	context   context.Context
 }
 
@@ -30,7 +30,7 @@ func newContext(ctx context.Context, e *Engine, pid *PID) *Context {
 		context:  ctx,
 		engine:   e,
 		pid:      pid,
-		children: algorithm.NewSafeMap[string, *PID](),
+		children: safemap.New[string, *PID](),
 	}
 }
 
@@ -51,7 +51,7 @@ func (c *Context) Request(pid *PID, msg any, timeout time.Duration) *Response {
 	return c.engine.Request(pid, msg, timeout)
 }
 
-// Respond will sent the given message to the sender of the current received message.
+// Respond will send the given message to the sender of the current received message.
 func (c *Context) Respond(msg any) {
 	if c.sender == nil {
 		slog.Warn("context got no sender", "func", "Respond", "pid", c.PID())
